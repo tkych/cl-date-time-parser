@@ -1,4 +1,4 @@
-;;;; Last modified : 2013-07-23 20:30:23 tkych
+;;;; Last modified : 2013-07-23 23:34:36 tkych
 
 ;; cl-date-time-parser/date-time-parser.lisp
 
@@ -30,7 +30,7 @@
   ;; when release, the following two line should be comment in.
   (defparameter *features-tmp* *features*)
   (setf *features* (delete :et *features*))
-  
+
   ;; when release, the following two lines should be comment out.
   ;; (ql:quickload '(:cl-ppcre :split-sequence :anaphora :local-time :parse-float))
   ;; (pushnew :et *features*)
@@ -52,7 +52,7 @@ If first element of WANT is `:values`, then check mutiple values."
   (defmacro =>t? (form)
     "Check whether FORM is evaluated to T."
     `(=>? ,form t))
-  
+
   (defmacro =>nil? (form)
     "Check whether FORM is evaluated to NIL."
     `(=>? ,form nil))
@@ -92,8 +92,8 @@ If first element of WANT is `:values`, then check mutiple values."
      "Oct" 23587200
      "Nov" 26265600
      "Dec" 28857600
-     
-     ;; invalid month name     
+
+     ;; invalid month name
      "January"   0
      "February"  2678400
      "March"     5097600
@@ -104,7 +104,7 @@ If first element of WANT is `:values`, then check mutiple values."
      "August"    18316800
      "September" 20995200
      "October"   23587200
-     "November"  26265600 
+     "November"  26265600
      "December"  28857600)
    :test #'equalp))
 
@@ -113,7 +113,7 @@ If first element of WANT is `:values`, then check mutiple values."
    '("Jan" 0
      "Feb" 2678400
      "Mar" 5184000
-     "Apr" 7862400 
+     "Apr" 7862400
      "May" 10454400
      "Jun" 13132800
      "Jul" 15724800
@@ -122,8 +122,8 @@ If first element of WANT is `:values`, then check mutiple values."
      "Oct" 23673600
      "Nov" 26352000
      "Dec" 28944000
-     
-     ;; invalid month name     
+
+     ;; invalid month name
      "January"   0
      "February"  2678400
      "March"     5184000
@@ -152,13 +152,13 @@ If first element of WANT is `:values`, then check mutiple values."
      "MST" -25200
      "PDT" -25200
      "PST" -28800
-     
+
      "AT" -14400
      "ET" -18000
      "CT" -21600
      "MT" -25200
      "PT" -28800
-     
+
      ;; Memo: Military-time-zone is defined by rfc822, and obsoluted by rfc1123,
      ;; rfc2822 and rfc5322. For more details see. rfc1123, 5.2.14.
      "A" 0 "B" 0 "C" 0 "D" 0 "E" 0 "F" 0 "G" 0 "H" 0 "I" 0
@@ -178,7 +178,7 @@ If first element of WANT is `:values`, then check mutiple values."
      "Fri" 1
      "Sat" 1
      "Sun" 1
-     
+
      ;; invalid day name
      "Monday"    1
      "Tuesday"   1
@@ -308,15 +308,15 @@ Reference:
                          (parse-float
                           (replace (copy-seq "0.0000")
                                    frac-part :start1 2)))))))
-           
+
            (parse-year (year) ; year
              (incf universal-time (year-to-ut year))
              (setf leap-year? (leap-year-p year)))
-           
+
            (parse-days (token) ; "DD"
              (let ((num-days (parse-integer token)))
                (incf universal-time (* (1- num-days) +day-secs+)))))
-      
+
       (dolist (token (ppcre:split "[, ]|(?=\\d[A-Za-z]+$)" date-string))
         (when (string/= "" token)
           ;; Memo:
@@ -327,7 +327,7 @@ Reference:
           ;;   Using digit-char-p, we enable to extend
           ;;   *month-secs-in-normal-year(or leap-year)* to non-alphabet local chars.
           (if (not (digit-char-p (char token (1- (length token)))))
-              
+
               ;; A. Parse char-token
               (acond
                 ;; Memo: consistency is not checking.
@@ -341,7 +341,7 @@ Reference:
                 ((get-offset token)
                  (incf universal-time it))
                 (t nil))
-              
+
               ;; B. Parse num-token
               (case (length token)
                 ;; "DD", "YY"
@@ -362,7 +362,7 @@ Reference:
                 ;; hh:mm(:ss)?([+-]hh:?mm)? or [+-]hh:?mm
                 (t (let ((tokens (ppcre:split "-|\\+" token)))
                      (ecase (length tokens)
-                       ;; "hh:mm:ss.ss", "hh:mm:ss", "hh:mm", ""
+                       ;; "hh:mm:ss.ss", "hh:mm:ss", "hh:mm", "" <- 0 !!!!!!!!!!!!!!!!!!!!!!!
                        (1 (parse-time-part token))
                        ;; "hh:mm:ss+hh:mm", "hh:mm:ss+hhmm", "hh:mm+hh:mm", "hh:mm+hhmm"
                        (2 (destructuring-bind (time time-zone) tokens
@@ -431,7 +431,7 @@ Reference:
             (:values (enc 0 0 0 1 1 2004 0) 0))
        (=>? (rfc822 "1 Jan 04")
             (:values (enc 0 0 0 1 1 2004 0) 0))
-       
+
        (=>? (rfc822 "Sun Jan 4 16:29:06 PST 2004")
             (:values (enc 6 29 16 4 1 2004 -8) 0))
 
@@ -478,7 +478,7 @@ Reference:
                  (decf universal-time (+ (* h #.+hour-secs+) (* m #.+minuite-secs+)))))
               (t (error "~S in ~S is unknown time-format"
                         zone-part date-time-string)))))
-        
+
         ;; 1. Parse TIME-part:
         (if (every #'digit-char-p time-part)
             (loop  ;Basic format: "hh", "hhmm", "hhmmss", "hhmmssss"
@@ -504,14 +504,14 @@ Reference:
         ((parse-weeks (token) ;"Www"
            (let ((num-weeks (parse-integer token :start 1 :end 3)))
              (incf universal-time (* 7 (1- num-weeks) +day-secs+))))
-         
+
          (parse-days (token)  ;"D", "DDD"
            (let ((num-days (parse-integer token)))
              (incf universal-time (* (1- num-days) +day-secs+))))
 
          (parse-month (month leap-year?)
            (incf universal-time (month-to-ut month leap-year?)))
-         
+
          (parse-year (year)
            (incf universal-time (year-to-ut year))
            (setf leap-year? (leap-year-p year)))
@@ -541,7 +541,7 @@ Reference:
                                (parse-weeks token)
                                (parse-days token)))
                     (t (error "~S in ~S is unknown time-format" token date)))))
-         
+
          (parse-date-part2 (date)
            ;; Parse iso8601 basic format
            ;; "CC", "DDD", "YYYY", "YYDDD", "YYMMDD", "YYYYDDD", "YYYYMMDD"
@@ -572,7 +572,7 @@ Reference:
                 (parse-month (parse-integer date :start 4 :end 6) leap-year?)
                 (parse-days  (subseq date 6)))
              (t (error "~S in ~S is unknown time-format" date date-time-string)))))
-      
+
       ;; 2.1. Parse DATE-part (main):
       (if (find #\- date-part)
           ;; Extended format:
@@ -604,12 +604,12 @@ Reference:
             (:values (enc 55 14 10 31 12 2003 +8) 0.7))
        (=>? (iso8601 "2003-12-31T10:14:55.7-0800")
             (:values (enc 55 14 10 31 12 2003 +8) 0.7))
-       
+
        (=>? (iso8601 "2003-12-31T10:14:55+08:00")
             (:values (enc 55 14 10 31 12 2003 -8) 0))
        (=>? (iso8601 "2003-12-31T10:14:55+0800")
             (:values (enc 55 14 10 31 12 2003 -8) 0))
-       
+
        (=>? (iso8601 "2003-12-31T10:14:55.7Z")
             (:values (enc 55 14 10 31 12 2003 0) 0.7))
        (=>? (iso8601 "2003-12-31T10:14:55Z")
@@ -634,7 +634,7 @@ Reference:
             (:values (enc 0 14 10 31 12 2003 0) 0))
        (=>? (iso8601 "2003-12-31T10Z")
             (:values (enc 0 0 10 31 12 2003 0) 0))
-       
+
        (=>? (iso8601 "2003")
             (:values (enc 0 0 0 1 1 2003 0) 0))
        (=>? (iso8601 "2003-12")
@@ -643,7 +643,7 @@ Reference:
             (:values (enc 0 0 0 31 12 2003 0) 0))
        (=>? (iso8601 "20031231")
             (:values (enc 0 0 0 31 12 2003 0) 0))
-       
+
        (=>? (iso8601 "-03-12")
             (:values (enc 0 0 0 1 12 2003 0) 0))
        (=>? (iso8601 "-03")
@@ -655,10 +655,10 @@ Reference:
 
        (=>? (iso8601 "03-12-31")
             (:values (enc 0 0 0 31 12 2003 0) 0))
-       
+
        (=>? (iso8601 "031231")
             (:values (enc 0 0 0 31 12 2003 0) 0))
-       
+
        (=>? (iso8601 "2003335")
             (:values (enc 0 0 0 1 12 2003 0) 0))
        (=>? (iso8601 "2003-335")
@@ -666,7 +666,7 @@ Reference:
        (=>? (iso8601 "03335")
             (:values (enc 0 0 0 1 12 2003 0) 0))
        (=>? (iso8601 "03-335")
-            (:values (enc 0 0 0 1 12 2003 0) 0)) 
+            (:values (enc 0 0 0 1 12 2003 0) 0))
        )
 
 
@@ -682,7 +682,7 @@ Parsable Formats:
  * Broken format: The above formats with little broken.
 
 Examples:
- 
+
  * (date-time-parser:parse-date-time \"Thu, 23 Jul 2013 19:42:23 JST\")
    => 3583564943, 0
 
@@ -706,7 +706,7 @@ Examples:
 
 #+et (flet ((parse (x) (parse-date-time x))
             (enc (&rest args) (apply #'encode-universal-time args)))
-       
+
        ;; rfc822-genus
        (=>? (parse "Sat, 01 Jan 2013 00:00:00 GMT")
             (:values (enc 0 0 0 1 1 2013 0) 0))
@@ -757,7 +757,7 @@ Examples:
             (:values (enc 0 0 0 1 1 2004 0) 0))
        (=>? (parse "1 Jan 04")
             (:values (enc 0 0 0 1 1 2004 0) 0))
-       
+
        (=>? (parse "Sun Jan 4 16:29:06 PST 2004")
             (:values (enc 6 29 16 4 1 2004 -8) 0))
 
@@ -769,12 +769,12 @@ Examples:
             (:values (enc 55 14 10 31 12 2003 +8) 0.7))
        (=>? (parse "2003-12-31T10:14:55.7-0800")
             (:values (enc 55 14 10 31 12 2003 +8) 0.7))
-       
+
        (=>? (parse "2003-12-31T10:14:55+08:00")
             (:values (enc 55 14 10 31 12 2003 -8) 0))
        (=>? (parse "2003-12-31T10:14:55+0800")
             (:values (enc 55 14 10 31 12 2003 -8) 0))
-       
+
        (=>? (parse "2003-12-31T10:14:55.7Z")
             (:values (enc 55 14 10 31 12 2003 0) 0.7))
        (=>? (parse "2003-12-31T10:14:55Z")
@@ -799,7 +799,7 @@ Examples:
             (:values (enc 0 14 10 31 12 2003 0) 0))
        (=>? (parse "2003-12-31T10Z")
             (:values (enc 0 0 10 31 12 2003 0) 0))
-       
+
        (=>? (parse "2003")
             (:values (enc 0 0 0 1 1 2003 0) 0))
        (=>? (parse "2003-12")
@@ -820,10 +820,10 @@ Examples:
 
        (=>? (parse "03-12-31")
             (:values (enc 0 0 0 31 12 2003 0) 0))
-       
+
        (=>? (parse "031231")
             (:values (enc 0 0 0 31 12 2003 0) 0))
-       
+
        (=>? (parse "2003335")
             (:values (enc 0 0 0 1 12 2003 0) 0))
        (=>? (parse "2003-335")
@@ -831,7 +831,7 @@ Examples:
        (=>? (parse "03335")
             (:values (enc 0 0 0 1 12 2003 0) 0))
        (=>? (parse "03-335")
-            (:values (enc 0 0 0 1 12 2003 0) 0)) 
+            (:values (enc 0 0 0 1 12 2003 0) 0))
        )
 
 

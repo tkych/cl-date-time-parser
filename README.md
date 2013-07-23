@@ -1,4 +1,4 @@
-Last modified : 2013-07-23 20:50:55 tkych
+Last modified : 2013-07-23 23:32:43 tkych
 
 version 0.1.00 (beta)
 
@@ -40,7 +40,7 @@ Examples
 
     (date-time-parser:parse-date-time "2013-01-01")
     => 3565987200, 0
-    
+
     (date-time-parser:parse-date-time "2013")
     => 3565987200, 0
 
@@ -65,13 +65,12 @@ Installation
  0. SHELL$   `git clone https://github.com/tkych/cl-date-time-parser.git`
  1. CL-REPL> `(push #p"/path-to-cl-date-time-parser/cl-date-time-parser/" asdf:*central-registry*)`
  2. CL-REPL> `(ql:quickload :cl-date-time-parser)` or `(asdf:load-system :cl-date-time-parser)`
- 
 
 
 Manual
 ------
 
-#### [Function] parse _date-time-string_ => _universal-time_, _fraction_
+#### [Function] parse-date-time _date-time-string_ => _universal-time_, _fraction_
 
 Parse _date-time-string_, and return _universal-time_ and _fraction_.
 _date-time-string_ must represent the date-time after 1900-01-01T00:00:00Z.
