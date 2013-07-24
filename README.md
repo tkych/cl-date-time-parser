@@ -1,4 +1,4 @@
-Last modified : 2013-07-23 23:32:43 tkych
+Last modified : 2013-07-24 19:18:50 tkych
 
 version 0.1.00 (beta)
 
@@ -6,9 +6,14 @@ version 0.1.00 (beta)
 CL-Date-Time-Parser
 ===================
 
-There are several formats for specifying date and time.
-For example, "Thu, 23 Jul 2013 19:42:23 JST" (for RFC822),
-"2013-07-23T19:42:23+09:00" (for ISO8601), etc.
+
+> In general, an implementation should be conservative in its sending
+> behavior, and liberal in its receiving behavior.
+> [RFC791: Internet Protocol](http://tools.ietf.org/html/rfc791)
+
+There are several formats for specifying date and time on the Web.
+For example, "Thu, 23 Jul 2013 19:42:23 JST" (RFC822),
+"2013-07-23T19:42:23+09:00" (ISO8601), etc.
 
 The goal of cl-date-time-parser is to hide the difference between
 date-time formats, and enable to manage date and time as the one date
@@ -18,6 +23,8 @@ Function `parse-date-time` parses date-time-string, and return
 universal-time and fraction.  Parsable date time formats are RFC822
 (RFC1123, RFC2822, RFC5322), asctime, ISO8601(1988, 2000, 2004),
 W3CDTF and RFC3339.
+`parse-date-time` can liberally parse the above formats with a little
+broken.
 
 
 Examples
@@ -47,6 +54,24 @@ Examples
     (date-time-parser:parse-date-time "1 Jan 13")
     => 3565987200, 0
 
+    (date-time-parser:parse-date-time "2003-12-31T25:14:55Z") ;broken hours
+    => 3281908495, 0
+    (date-time-parser:parse-date-time "2004-01-01T01:14:55Z")
+    => 3281908495, 0
+
+    (date-time-parser:parse-date-time "2003-12-31T10:61:55Z") ;broken minuits
+    => 3281857315, 0
+    (date-time-parser:parse-date-time "2003-12-31T11:01:55Z")
+    => 3281857315, 0
+
+    (date-time-parser:parse-date-time "2003-12-31T10:14:61Z") ;broken seconds
+    => 3281854501, 0
+    (date-time-parser:parse-date-time "2003-12-31T10:15:01Z")
+    => 3281854501, 0
+
+
+For further examples, please see Eval-Test in date-time-parser.lisp
+
 
 Depends-on
 ----------
@@ -70,11 +95,10 @@ Installation
 Manual
 ------
 
-#### [Function] parse-date-time _date-time-string_ => _universal-time_, _fraction_
+#### [Function] PARSE-DATE-TIME _date-time-string_ => _universal-time_, _fraction_
 
 Parse _date-time-string_, and return _universal-time_ and _fraction_.
 _date-time-string_ must represent the date-time after 1900-01-01T00:00:00Z.
-
 
 Parsable Formats:
 

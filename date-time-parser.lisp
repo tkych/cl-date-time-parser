@@ -1,4 +1,4 @@
-;;;; Last modified : 2013-07-23 23:34:36 tkych
+;;;; Last modified : 2013-07-24 19:23:17 tkych
 
 ;; cl-date-time-parser/date-time-parser.lisp
 
@@ -71,8 +71,8 @@ If first element of WANT is `:values`, then check mutiple values."
   (defconstant +day-secs+     (* 24 +hour-secs+)))
 
 (defparameter *month-vec-in-normal-year*
-    #(:stub 0 2678400 5097600 7776000 10368000 13046400 15638400 18316800
-     20995200 23587200 26265600 28857600))
+  #(:stub 0 2678400 5097600 7776000 10368000 13046400 15638400 18316800
+    20995200 23587200 26265600 28857600))
 
 (defparameter *month-vec-in-leap-year*
   #(:stub 0 2678400 5184000 7862400 10454400 13132800 15724800 18403200
@@ -228,7 +228,6 @@ If first element of WANT is `:values`, then check mutiple values."
 #+et (=>? (year-to-ut 1901) (* 365 24 60 60))
 #+et (=>? (year-to-ut 1902) (+ (year-to-ut 1901) (* 365 24 60 60)))
 #+et (=>? (year-to-ut 1905) (+ (year-to-ut 1904) (* 366 24 60 60)))
-
 #+et (=>? (year-to-ut 2000)
           (local-time:timestamp-to-universal
            (local-time:parse-timestring "2000-01-01T00:00:00Z")))
@@ -280,7 +279,7 @@ c.f. RFC3339, (Appendix C. Leap Years)"
                        '("Dec" "December" 12))))
 
 
-(defun parse-rfc822-genus (date-string)
+(defun parse-rfc822-genus (date-time-string)
   "Parse DATE-TIME-STRING with RFC822, RFC2822, RFC5322 or asctime format,
 and return (values UNIVERSAL-TIME FRACTION).
 
@@ -309,7 +308,7 @@ Reference:
                           (replace (copy-seq "0.0000")
                                    frac-part :start1 2)))))))
 
-           (parse-year (year) ; year
+           (parse-year (year)
              (incf universal-time (year-to-ut year))
              (setf leap-year? (leap-year-p year)))
 
@@ -317,7 +316,7 @@ Reference:
              (let ((num-days (parse-integer token)))
                (incf universal-time (* (1- num-days) +day-secs+)))))
 
-      (dolist (token (ppcre:split "[, ]|(?=\\d[A-Za-z]+$)" date-string))
+      (dolist (token (ppcre:split "[, ]|(?=\\d[A-Za-z]+$)" date-time-string))
         (when (string/= "" token)
           ;; Memo:
           ;; * Check whether last char is digit-char or not,
@@ -362,7 +361,7 @@ Reference:
                 ;; hh:mm(:ss)?([+-]hh:?mm)? or [+-]hh:?mm
                 (t (let ((tokens (ppcre:split "-|\\+" token)))
                      (ecase (length tokens)
-                       ;; "hh:mm:ss.ss", "hh:mm:ss", "hh:mm", "" <- 0 !!!!!!!!!!!!!!!!!!!!!!!
+                       ;; "hh:mm:ss.ss", "hh:mm:ss", "hh:mm"
                        (1 (parse-time-part token))
                        ;; "hh:mm:ss+hh:mm", "hh:mm:ss+hhmm", "hh:mm+hh:mm", "hh:mm+hhmm"
                        (2 (destructuring-bind (time time-zone) tokens
@@ -373,9 +372,11 @@ Reference:
                                            time-zone :start (if (find #\: time-zone) 3 2))))
                               (incf universal-time (* sign (+ (* hour #.+hour-secs+)
                                                               (* minute #.+minuite-secs+)))))))))))))))
+    
     (when (equal 0 leap-year?)
-      (warn "Year was not detected, return values might be inaccurate."))
+      (error "Year was not detected in ~S as RFC822-Genus." date-time-string))
     (incf universal-time (month-to-ut month leap-year?))
+    
     (values universal-time fraction)))
 
 
@@ -466,18 +467,19 @@ Reference:
         (when zone-part
           (unless (string-equal "Z" zone-part)
             (case (length zone-part)
-              ((2 3)                    ; "+h", "+hh"
+              ((2 3)  ; "+h", "+hh"
                (decf universal-time (* #.+hour-secs+ (parse-integer zone-part))))
-              (5                        ; "+hhmm"
+              (5      ; "+hhmm"
                (multiple-value-bind (h m)
                    (truncate (parse-integer zone-part) 100)
                  (decf universal-time (+ (* h #.+hour-secs+) (* m #.+minuite-secs+)))))
-              (6                        ; "+hh:mm"
+              (6      ; "+hh:mm"
                (multiple-value-bind (h m)
                    (truncate (parse-integer (remove #\: zone-part)) 100)
                  (decf universal-time (+ (* h #.+hour-secs+) (* m #.+minuite-secs+)))))
-              (t (error "~S in ~S is unknown time-format"
-                        zone-part date-time-string)))))
+              (t
+               (error "~S in ~S is unknown time-format as ISO8601-Genus"
+                      zone-part date-time-string)))))
 
         ;; 1. Parse TIME-part:
         (if (every #'digit-char-p time-part)
@@ -516,11 +518,12 @@ Reference:
            (incf universal-time (year-to-ut year))
            (setf leap-year? (leap-year-p year)))
 
-         (parse-date-part1 (date)
+         (parse-extended-format (date)
+           ;; Parse iso8601 extended format
            ;; "YYYY-MM", "YY-MM-DD", "YYYY-MM-DD", "YYYY-DDD", "YYYY-Www-D", "YYYYYY-DDD"
            (loop
               :for token :in (split-sequence #\- date)
-              :with year-parsed? := nil
+              :with year-parsed?  := nil
               :with month-parsed? := nil
               :do (case (length token)
                     ;; "YY", "MM", "DD"
@@ -536,13 +539,14 @@ Reference:
                     ;; "YYYY", "YYYYYY"
                     ((4 6) (parse-year (parse-integer token))
                            (setf year-parsed? t))
-                    ;; "Www" "D" "DDD"
+                    ;; "Www", "D", "DDD"
                     ((1 3) (if (find #\W token :test #'char-equal)
                                (parse-weeks token)
                                (parse-days token)))
-                    (t (error "~S in ~S is unknown time-format" token date)))))
+                    (t (error "~S in ~S is unknown time-format as ISO8601-Genus"
+                              token date)))))
 
-         (parse-date-part2 (date)
+         (parse-basic-format (date)
            ;; Parse iso8601 basic format
            ;; "CC", "DDD", "YYYY", "YYDDD", "YYMMDD", "YYYYDDD", "YYYYMMDD"
            (case (length date)
@@ -571,24 +575,27 @@ Reference:
              (8 (parse-year  (parse-integer date :start 0 :end 4))
                 (parse-month (parse-integer date :start 4 :end 6) leap-year?)
                 (parse-days  (subseq date 6)))
-             (t (error "~S in ~S is unknown time-format" date date-time-string)))))
+             (t (error "~S in ~S is unknown time-format as ISO8601-Genus"
+                       date date-time-string)))))
 
       ;; 2.1. Parse DATE-part (main):
       (if (find #\- date-part)
           ;; Extended format:
+          ;; "-YY", "-YY-MM", "-YYMM", "-YY-MM-DD",
+          ;; "YYYY-MM", "YYYY-MM-DD", "YYYY-DDD", "YYYY-Www-D", "YYYYYY-DDD"
           (if (char= #\- (char date-part 0))
               ;; "-YY", "-YY-MM", "-YYMM", "-YY-MM-DD" -> "20YY", "20YY-MM", "20YYMM", "20YY-MM-DD"
               (let ((replaced (ppcre:regex-replace "-" date-part "20")))
                 (if (find #\- replaced)
                     ;; "20YY-MM", "20YY-MM-DD"
-                    (parse-date-part1 replaced)
+                    (parse-extended-format replaced)
                     ;; "20YY", "20YYMM" -> "20YY0101", "20YYMM01"
-                    (parse-date-part2 (replace (copy-seq "00000101") replaced))))
+                    (parse-basic-format (replace (copy-seq "00000101") replaced))))
               ;; "YYYY-MM", "YYYY-MM-DD", "YYYY-DDD", "YYYY-Www-D", "YYYYYY-DDD"
-              (parse-date-part1 date-part))
+              (parse-extended-format date-part))
           ;; Basic format:
           ;; "CC", "YYYY", "YYDDD", "YYMMDD", "YYYYMMDD", "YYYYWwwD"
-          (parse-date-part2 date-part)))
+          (parse-basic-format date-part)))
 
     ;; 3. Return values
     (values universal-time fraction)))
@@ -832,6 +839,28 @@ Examples:
             (:values (enc 0 0 0 1 12 2003 0) 0))
        (=>? (parse "03-335")
             (:values (enc 0 0 0 1 12 2003 0) 0))
+
+       ;; bogus W3CDTF (invalid hour)
+       (=>? (parse "2003-12-31T25:14:55Z")
+            (:values (enc 55 14 1 1 1 2004 0) 0))
+
+       ;; bogus W3CDTF (invalid minute)
+       (=>? (parse "2003-12-31T10:61:55Z")
+            (:values (enc 55 1 11 31 12 2003 0) 0))
+
+       ;; bogus W3CDTF (invalid second)
+       (=>? (parse "2003-12-31T10:14:61Z")
+            (:values (enc 1 15 10 31 12 2003 0) 0))
+
+       ;; MSSQL date time format
+       (=>? (parse "2004-07-08 23:56:58.7")
+            (:values (enc 58 56 23 8 7 2004 0) 0.7))
+
+       ;; MSSQL-ish date time format (without fractional second)
+       (=>? (parse "2004-07-08 23:56:58")
+            (:values (enc 58 56 23 8 7 2004 0) 0))
+
+       ;; above some examples from http://pythonhosted.org/feedparser/date-parsing.html#date-parsing
        )
 
 
