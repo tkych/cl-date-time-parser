@@ -1,4 +1,4 @@
-;;;; Last modified : 2013-07-24 19:23:17 tkych
+;;;; Last modified : 2013-07-25 23:28:09 tkych
 
 ;; cl-date-time-parser/date-time-parser.lisp
 
@@ -11,12 +11,9 @@
 (defpackage #:cl-date-time-parser
   (:use :cl)
   (:nicknames #:date-time-parser)
-  (:import-from #:anaphora
-                #:it #:aif #:acond)
-  (:import-from #:split-sequence
-                #:split-sequence)
-  (:import-from #:parse-float
-                #:parse-float)
+  (:import-from #:anaphora       #:it #:aif #:acond)
+  (:import-from #:split-sequence #:split-sequence)
+  (:import-from #:parse-float    #:parse-float)
   (:export #:parse-date-time))
 
 (in-package #:cl-date-time-parser)
@@ -71,11 +68,13 @@ If first element of WANT is `:values`, then check mutiple values."
   (defconstant +day-secs+     (* 24 +hour-secs+)))
 
 (defparameter *month-vec-in-normal-year*
-  #(:stub 0 2678400 5097600 7776000 10368000 13046400 15638400 18316800
+  #("0 is not month number."
+    0 2678400 5097600 7776000 10368000 13046400 15638400 18316800
     20995200 23587200 26265600 28857600))
 
 (defparameter *month-vec-in-leap-year*
-  #(:stub 0 2678400 5184000 7862400 10454400 13132800 15724800 18403200
+  #("0 is not month number."
+    0 2678400 5184000 7862400 10454400 13132800 15724800 18403200
     21081600 23673600 26352000 28944000))
 
 (defparameter *month-ht-in-normal-year*
@@ -554,7 +553,7 @@ Reference:
              ;; ISO8601-century format can not be parsed.
              ;; ISO8601-century is a 2-digit which slided forward 99 years comparing to ordinay-century.
              ;; e.g. 20 iso8601-century means the year between 2000 and 2099,
-             ;;      whereas usually 20 century means the year between 1901 and 2000.
+             ;;      whereas usually 20th century means the year between 1901 and 2000.
              ;; "CC"
              (2 (error "ISO8601 century ~S could not be parsed." date))
              ;; "DDD"
@@ -564,7 +563,7 @@ Reference:
              ;; "YYDDD"
              (5 (parse-year (+ 2000 (parse-integer date :start 0 :end 2)))
                 (parse-days (subseq date 2)))
-             ;; "YYMMDD" (subseq "YYMMDD" 4)
+             ;; "YYMMDD"
              (6 (parse-year  (+ 2000 (parse-integer date :start 0 :end 2)))
                 (parse-month (parse-integer date :start 2 :end 4) leap-year?)
                 (parse-days  (subseq date 4)))
@@ -682,29 +681,28 @@ Reference:
 DATE-TIME-STRING must represent the date-time after 1900-01-01T00:00:00Z.
 
 Parsable Formats:
-
  * RFC822 Genus: RFC822, RFC1123, RFC2822, RFC5322, asctime.
  * ISO8601 Genus: ISO8601(:1988, :2000 and :2004. except for no-year format),
                   W3CDTF, RFC3339.
  * Broken format: The above formats with little broken.
 
 Examples:
-
- * (date-time-parser:parse-date-time \"Thu, 23 Jul 2013 19:42:23 JST\")
+ * (parse-date-time \"Thu, 23 Jul 2013 19:42:23 JST\")
    => 3583564943, 0
 
- * (date-time-parser:parse-date-time \"2013-07-23T19:42:23+09:00\")
+ * (parse-date-time \"2013-07-23T19:42:23+09:00\")
    => 3583564943, 0
 
- * (date-time-parser:parse-date-time \"23 Jul 13 19:42:23 +0900\")
+ * (parse-date-time \"23 Jul 13 19:42:23 +0900\")
    => 3583564943, 0
 
- * (date-time-parser:parse-date-time \"Thu Jul 23 19:42:23 JST 2013\")
+ * (parse-date-time \"Thu Jul 23 19:42:23 JST 2013\")
    => 3583564943, 0
 
- * (date-time-parser:parse-date-time \"2013-07-23T19:42:23.45Z\")
+ * (parse-date-time \"2013-07-23T19:42:23.45Z\")
    => 3583597343, 0.45
-"
+
+ For more examples, see Eval-Test in date-time-parser.lisp"
   (check-type date-time-string string)
   (if (ppcre:scan "\\D{2}" date-time-string)
       (parse-rfc822-genus date-time-string)
@@ -860,7 +858,7 @@ Examples:
        (=>? (parse "2004-07-08 23:56:58")
             (:values (enc 58 56 23 8 7 2004 0) 0))
 
-       ;; above some examples from http://pythonhosted.org/feedparser/date-parsing.html#date-parsing
+       ;; above some examples from http://pythonhosted.org/feedparser/date-parsing.html
        )
 
 

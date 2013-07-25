@@ -1,4 +1,4 @@
-Last modified : 2013-07-24 19:18:50 tkych
+Last modified : 2013-07-25 23:23:58 tkych
 
 version 0.1.00 (beta)
 
@@ -21,8 +21,8 @@ time format (Universal Time).
 
 Function `parse-date-time` parses date-time-string, and return
 universal-time and fraction.  Parsable date time formats are RFC822
-(RFC1123, RFC2822, RFC5322), asctime, ISO8601(1988, 2000, 2004),
-W3CDTF and RFC3339.
+(RFC1123, RFC2822, RFC5322), asctime, ISO8601(1988, 2000, 2004, except
+for without year), W3CDTF and RFC3339.
 `parse-date-time` can liberally parse the above formats with a little
 broken.
 
