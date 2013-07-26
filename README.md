@@ -1,4 +1,4 @@
-Last modified : 2013-07-26 22:10:53 tkych
+Last modified : 2013-07-26 22:21:47 tkych
 
 version 0.1.00 (beta)
 
@@ -32,7 +32,8 @@ Parsable date time formats are:
  * RFC850 (RFC1036),
  * ISO8601 (1988, 2000, 2004, except for without year), W3CDTF (subset of ISO 8601)
  * RFC3339.
- * `parse-date-time` can liberally parse the above formats with a little broken.
+
+In addition, `parse-date-time` can liberally parse the above formats with a little broken.
 
 
 Examples

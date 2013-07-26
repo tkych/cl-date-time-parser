@@ -1,4 +1,4 @@
-;;;; Last modified : 2013-07-26 22:16:37 tkych
+;;;; Last modified : 2013-07-26 23:12:35 tkych
 
 ;; cl-date-time-parser/date-time-parser.lisp
 
@@ -24,8 +24,9 @@
 ;;--------------------------------------------------------------------
 
 (eval-when (:compile-toplevel :load-toplevel)
-  ;; when release, the following two line should be comment in.
   (defparameter *features-tmp* *features*)
+
+  ;; when release, the following line should be comment in.
   (setf *features* (delete :et *features*))
 
   ;; when release, the following two lines should be comment out.
@@ -220,7 +221,6 @@ If first element of WANT is `:values`, then check mutiple values."
 
 
 (defun year-to-ut (year)
-  (check-type year (integer 1900 *))
   (encode-universal-time 0 0 0 1 1 year 0))
 
 #+et (=>? (year-to-ut 1900) 0)
@@ -687,8 +687,8 @@ Reference:
 DATE-TIME-STRING must represent the date-time after 1900-01-01T00:00:00Z.
 
 Parsable Formats:
- * RFC822 Genus: RFC822, RFC1123, RFC2822, RFC5322, asctime.
- * ISO8601 Genus: ISO8601(:1988, :2000 and :2004. except for no-year format),
+ * RFC822 Genus: RFC822 (RFC1123, RFC2822, RFC5322), RFC850 (RFC1036) and asctime.
+ * ISO8601 Genus: ISO 8601 (:1988, :2000 and :2004. except for no-year format),
                   W3CDTF, RFC3339.
  * Broken format: The above formats with little broken.
 
@@ -869,7 +869,6 @@ Examples:
 
 
 ;; Cleanup for Eval-Test
-;; when release, the following form should be comment in.
 (eval-when (:compile-toplevel :load-toplevel)
   (setf *features* *features-tmp*))
 
