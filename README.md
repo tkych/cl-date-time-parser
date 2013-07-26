@@ -32,7 +32,8 @@ Parsable date time formats are:
  * RFC850 (RFC1036),
  * ISO8601 (1988, 2000, 2004, except for without year), W3CDTF (subset of ISO 8601)
  * RFC3339.
- * `parse-date-time` can liberally parse the above formats with a little broken.
+
+In addition, `parse-date-time` can liberally parse the above formats with a little broken.
 
 
 Examples
