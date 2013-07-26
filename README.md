@@ -1,4 +1,4 @@
-Last modified : 2013-07-26 22:21:47 tkych
+Last modified : 2013-07-27 00:11:57 tkych
 
 version 0.1.00 (beta)
 
@@ -16,7 +16,7 @@ For example:
 
  * "Thu, 23 Jul 2013 19:42:23 GMT" (RFC1123),
  * "Thu Jul 23 19:42:23 2013" (asctime),
- * "Thudesday, 23-Jul-13 19:42:23 GMT" (RFC1036),
+ * "Thursday, 23-Jul-13 19:42:23 GMT" (RFC1036),
  * "2013-07-23T19:42:23Z" (RFC3339),
  * "20130723T194223Z" (ISO8601:2004), etc.
 
@@ -45,7 +45,7 @@ Examples
     (date-time-parser:parse-date-time "Thu Jul 23 19:42:23 2013") ;asctime
     => 3583597343, 0
 
-    (date-time-parser:parse-date-time "Thudesday, 23-Jul-13 19:42:23 GMT") ;RFC 1036
+    (date-time-parser:parse-date-time "Thursday, 23-Jul-13 19:42:23 GMT") ;RFC 1036
     => 3583597343, 0
 
     (date-time-parser:parse-date-time "2013-07-23T19:42:23Z") ;RFC 3339
