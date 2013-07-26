@@ -1,4 +1,4 @@
-;;;; Last modified : 2013-07-25 23:28:09 tkych
+;;;; Last modified : 2013-07-26 22:16:37 tkych
 
 ;; cl-date-time-parser/date-time-parser.lisp
 
@@ -279,13 +279,16 @@ c.f. RFC3339, (Appendix C. Leap Years)"
 
 
 (defun parse-rfc822-genus (date-time-string)
-  "Parse DATE-TIME-STRING with RFC822, RFC2822, RFC5322 or asctime format,
-and return (values UNIVERSAL-TIME FRACTION).
+  "Parse DATE-TIME-STRING with RFC822 (RFC1123, RFC2822, RFC5322),
+RFC850 (RFC1036) or asctime format, and return
+ (values UNIVERSAL-TIME FRACTION).
 
 Reference:
  * RFC822  -- http://tools.ietf.org/html/rfc822
  * RFC2822 -- http://tools.ietf.org/html/rfc2822
  * RFC5322 -- http://tools.ietf.org/html/rfc5322
+ * RFC850  -- http://tools.ietf.org/html/rfc850
+ * RFC1036 -- http://tools.ietf.org/html/rfc1036
  * asctime -- http://en.cppreference.com/w/c/chrono/asctime
 "
   (let ((universal-time 0)
@@ -315,7 +318,7 @@ Reference:
              (let ((num-days (parse-integer token)))
                (incf universal-time (* (1- num-days) +day-secs+)))))
 
-      (dolist (token (ppcre:split "[, ]|(?=\\d[A-Za-z]+$)" date-time-string))
+      (dolist (token (ppcre:split "[, -]|(?=\\d[A-Za-z]+$)" date-time-string))
         (when (string/= "" token)
           ;; Memo:
           ;; * Check whether last char is digit-char or not,
@@ -330,7 +333,7 @@ Reference:
               (acond
                 ;; Memo: consistency is not checking.
                 ;; i.e. "Mon, 21 Jul 2013 07:22:21 GMT" and "Sun, 21 Jul 2013 07:22:21 GMT"
-                ;; are parsed to the same universal time value.
+                ;;      are parsed to the same universal time value.
                 ((gethash token *day-of-week* nil)
                  nil)
                 ;; we don't know the year yet, calc month is after parse year.
@@ -437,6 +440,9 @@ Reference:
 
        (=>? (rfc822 "Thu Jul 23 19:42:23 JST 2013")
             (:values (enc 23 42 19 23 7 2013 -9) 0))
+
+       (=>? (rfc822 "Thudesday, 23-Jul-13 19:42:23 GMT")
+            (:values (enc 23 42 19 23 7 2013 0) 0))
        )
 
 

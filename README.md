@@ -1,4 +1,4 @@
-Last modified : 2013-07-25 23:23:58 tkych
+Last modified : 2013-07-26 22:10:53 tkych
 
 version 0.1.00 (beta)
 
@@ -11,24 +11,47 @@ CL-Date-Time-Parser
 > behavior, and liberal in its receiving behavior.
 > [RFC791: Internet Protocol](http://tools.ietf.org/html/rfc791)
 
-There are several formats for specifying date and time on the Web.
-For example, "Thu, 23 Jul 2013 19:42:23 JST" (RFC822),
-"2013-07-23T19:42:23+09:00" (ISO8601), etc.
+There are a lot of formats to specify the date and time on the Web.
+For example:
+
+ * "Thu, 23 Jul 2013 19:42:23 GMT" (RFC1123),
+ * "Thu Jul 23 19:42:23 2013" (asctime),
+ * "Thudesday, 23-Jul-13 19:42:23 GMT" (RFC1036),
+ * "2013-07-23T19:42:23Z" (RFC3339),
+ * "20130723T194223Z" (ISO8601:2004), etc.
 
 The goal of cl-date-time-parser is to hide the difference between
 date-time formats, and enable to manage date and time as the one date
 time format (Universal Time).
 
-Function `parse-date-time` parses date-time-string, and return
-universal-time and fraction.  Parsable date time formats are RFC822
-(RFC1123, RFC2822, RFC5322), asctime, ISO8601(1988, 2000, 2004, except
-for without year), W3CDTF and RFC3339.
-`parse-date-time` can liberally parse the above formats with a little
-broken.
+Function `parse-date-time` parses date-time-string, and return universal-time and fraction.
+Parsable date time formats are:
+
+ * RFC822 (RFC1123, RFC2822, RFC5322),
+ * asctime,
+ * RFC850 (RFC1036),
+ * ISO8601 (1988, 2000, 2004, except for without year), W3CDTF (subset of ISO 8601)
+ * RFC3339.
+ * `parse-date-time` can liberally parse the above formats with a little broken.
 
 
 Examples
 --------
+
+    (date-time-parser:parse-date-time "Thu, 23 Jul 2013 19:42:23 GMT") ;RFC 1123
+    => 3583597343, 0
+
+    (date-time-parser:parse-date-time "Thu Jul 23 19:42:23 2013") ;asctime
+    => 3583597343, 0
+
+    (date-time-parser:parse-date-time "Thudesday, 23-Jul-13 19:42:23 GMT") ;RFC 1036
+    => 3583597343, 0
+
+    (date-time-parser:parse-date-time "2013-07-23T19:42:23Z") ;RFC 3339
+    => 3583597343, 0
+
+    (date-time-parser:parse-date-time "20130723T194223Z") ;ISO 8601
+    => 3583597343, 0
 
     (date-time-parser:parse-date-time "Thu, 23 Jul 2013 19:42:23 JST")
     => 3583564943, 0
@@ -111,18 +134,20 @@ Reference
 ---------
 
  * RFC822 (Internet Message Format) Genus:
-   * [RFC822: Standard for the Format of Arpa Internet Text Messages](http://tools.ietf.org/html/rfc822)
-   * [RFC1123: Requirements for Internet Hosts -- Application and Support](http://tools.ietf.org/html/rfc1123)
-   * [RFC2822: Internet Message Format](http://tools.ietf.org/html/rfc2822)
-   * [RFC5322: Internet Message Format](http://tools.ietf.org/html/rfc5322)
-     * [errata for RFC5322](http://www.rfc-editor.org/errata_search.php?rfc=5322)
+   * [RFC 822: Standard for the Format of Arpa Internet Text Messages](http://tools.ietf.org/html/rfc822)
+   * [RFC 1123: Requirements for Internet Hosts -- Application and Support](http://tools.ietf.org/html/rfc1123)
+   * [RFC 2822: Internet Message Format](http://tools.ietf.org/html/rfc2822)
+   * [RFC 5322: Internet Message Format](http://tools.ietf.org/html/rfc5322)
+     * [errata for RFC 5322](http://www.rfc-editor.org/errata_search.php?rfc=5322)
+   * [RFC 850: Standard for Interchange of USENET Messages](http://tools.ietf.org/html/rfc850)
+   * [RFC 1036: Standard for Interchange of USENET Messages](http://tools.ietf.org/html/rfc1036)
    * [asctime format](http://en.cppreference.com/w/c/chrono/asctime)
 
  * ISO8601 (Timestamp) Genus:
-   * [ISO8601:1988, 2000, 2004](http://www.iso.org/iso/home/standards/iso8601.htm)
+   * [ISO 8601:1988, 2000, 2004](http://www.iso.org/iso/home/standards/iso8601.htm)
    * [W3CDTF: Date and Time Formats](http://www.w3.org/TR/1998/NOTE-datetime-19980827)
-   * [RFC3339: Date and Time on the Internet: Timestamps](http://tools.ietf.org/html/rfc3339)
-     * [errata for RFC3339](http://www.rfc-editor.org/errata_search.php?rfc=3339)
+   * [RFC 3339: Date and Time on the Internet: Timestamps](http://tools.ietf.org/html/rfc3339)
+     * [errata for RFC 3339](http://www.rfc-editor.org/errata_search.php?rfc=3339)
 
 
 Author, License, Copyright
