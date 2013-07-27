@@ -1,4 +1,4 @@
-Last modified : 2013-07-27 00:11:57 tkych
+Last modified : 2013-07-27 10:18:41 tkych
 
 version 0.1.00 (beta)
 
@@ -21,76 +21,76 @@ For example:
  * "20130723T194223Z" (ISO8601:2004), etc.
 
 The goal of cl-date-time-parser is to hide the difference between
-date-time formats, and enable to manage date and time as the one date
-time format (Universal Time).
+date-time formats, and enable to manage date and time as the one date-time format
+([Universal Time](http://www.lispworks.com/documentation/HyperSpec/Body/25_adb.htm)).
 
 Function `parse-date-time` parses date-time-string, and return universal-time and fraction.
-Parsable date time formats are:
+Parsable date-time formats are:
 
  * RFC822 (RFC1123, RFC2822, RFC5322),
  * asctime,
  * RFC850 (RFC1036),
- * ISO8601 (1988, 2000, 2004, except for without year), W3CDTF (subset of ISO 8601)
+ * ISO8601 (1988, 2000, 2004, except for no-year format), W3CDTF (subset of ISO 8601)
  * RFC3339.
 
-In addition, `parse-date-time` can liberally parse the above formats with a little broken.
+In addition, `parse-date-time` can liberally parse the above formats with little broken.
 
 
 Examples
 --------
 
-    (date-time-parser:parse-date-time "Thu, 23 Jul 2013 19:42:23 GMT") ;RFC 1123
+    (parse-date-time "Thu, 23 Jul 2013 19:42:23 GMT") ;RFC 1123
     => 3583597343, 0
 
-    (date-time-parser:parse-date-time "Thu Jul 23 19:42:23 2013") ;asctime
+    (parse-date-time "Thu Jul 23 19:42:23 2013") ;asctime
     => 3583597343, 0
 
-    (date-time-parser:parse-date-time "Thursday, 23-Jul-13 19:42:23 GMT") ;RFC 1036
+    (parse-date-time "Thursday, 23-Jul-13 19:42:23 GMT") ;RFC 1036
     => 3583597343, 0
 
-    (date-time-parser:parse-date-time "2013-07-23T19:42:23Z") ;RFC 3339
+    (parse-date-time "2013-07-23T19:42:23Z") ;RFC 3339
     => 3583597343, 0
 
-    (date-time-parser:parse-date-time "20130723T194223Z") ;ISO 8601
+    (parse-date-time "20130723T194223Z") ;ISO 8601
     => 3583597343, 0
 
-    (date-time-parser:parse-date-time "Thu, 23 Jul 2013 19:42:23 JST")
+    (parse-date-time "Thu, 23 Jul 2013 19:42:23 JST")
     => 3583564943, 0
 
-    (date-time-parser:parse-date-time "2013-07-23T19:42:23+09:00")
+    (parse-date-time "2013-07-23T19:42:23+09:00")
     => 3583564943, 0
 
-    (date-time-parser:parse-date-time "23 Jul 13 19:42:23 +0900")
+    (parse-date-time "23 Jul 13 19:42:23 +0900")
     => 3583564943, 0
 
-    (date-time-parser:parse-date-time "Thu Jul 23 19:42:23 JST 2013")
+    (parse-date-time "Thu Jul 23 19:42:23 JST 2013")
     => 3583564943, 0
 
-    (date-time-parser:parse-date-time "2013-07-23T19:42:23.45Z")
+    (parse-date-time "2013-07-23T19:42:23.45Z")
     => 3583597343, 0.45
 
-    (date-time-parser:parse-date-time "2013-01-01")
+    (parse-date-time "2013-01-01")
     => 3565987200, 0
 
-    (date-time-parser:parse-date-time "2013")
+    (parse-date-time "2013")
     => 3565987200, 0
 
-    (date-time-parser:parse-date-time "1 Jan 13")
+    (parse-date-time "1 Jan 13")
     => 3565987200, 0
 
-    (date-time-parser:parse-date-time "2003-12-31T25:14:55Z") ;broken hours
+    (parse-date-time "2003-12-31T25:14:55Z") ;broken hours
     => 3281908495, 0
-    (date-time-parser:parse-date-time "2004-01-01T01:14:55Z")
+    (parse-date-time "2004-01-01T01:14:55Z")
     => 3281908495, 0
 
-    (date-time-parser:parse-date-time "2003-12-31T10:61:55Z") ;broken minuits
+    (parse-date-time "2003-12-31T10:61:55Z") ;broken minuits
     => 3281857315, 0
-    (date-time-parser:parse-date-time "2003-12-31T11:01:55Z")
+    (parse-date-time "2003-12-31T11:01:55Z")
     => 3281857315, 0
 
-    (date-time-parser:parse-date-time "2003-12-31T10:14:61Z") ;broken seconds
+    (parse-date-time "2003-12-31T10:14:61Z") ;broken seconds
     => 3281854501, 0
-    (date-time-parser:parse-date-time "2003-12-31T10:15:01Z")
+    (parse-date-time "2003-12-31T10:15:01Z")
     => 3281854501, 0
 
 
@@ -127,7 +127,7 @@ _date-time-string_ must represent the date-time after 1900-01-01T00:00:00Z.
 Parsable Formats:
 
  * RFC822 Genus: RFC822, RFC1123, RFC2822, RFC5322, asctime.
- * ISO8601 Genus: ISO8601(:1988, :2000 and :2004. except for no-year), W3CDTF, RFC3339.
+ * ISO8601 Genus: ISO8601(:1988, :2000 and :2004. except for no-year format), W3CDTF, RFC3339.
  * Broken format: The above formats with little broken.
 
 
