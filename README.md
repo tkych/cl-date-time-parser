@@ -1,4 +1,4 @@
-Last modified : 2013-07-27 10:18:41 tkych
+Last modified : 2013-07-29 19:20:26 tkych
 
 version 0.1.00 (beta)
 
@@ -6,10 +6,10 @@ version 0.1.00 (beta)
 CL-Date-Time-Parser
 ===================
 
-
 > In general, an implementation should be conservative in its sending
 > behavior, and liberal in its receiving behavior.
 > [RFC791: Internet Protocol](http://tools.ietf.org/html/rfc791)
+
 
 There are a lot of formats to specify the date and time on the Web.
 For example:
@@ -30,7 +30,7 @@ Parsable date-time formats are:
  * RFC822 (RFC1123, RFC2822, RFC5322),
  * asctime,
  * RFC850 (RFC1036),
- * ISO8601 (1988, 2000, 2004, except for no-year format), W3CDTF (subset of ISO 8601)
+ * ISO8601 (1988, 2000, 2004, except for no-year format), W3CDTF (subset of ISO 8601),
  * RFC3339.
 
 In addition, `parse-date-time` can liberally parse the above formats with little broken.
@@ -93,6 +93,11 @@ Examples
     (parse-date-time "2003-12-31T10:15:01Z")
     => 3281854501, 0
 
+    (parse-date-time ";3-12-31T10:15:01Z") ;broken two-digit-years c.f. rfc3339, 3.
+    => 3597473701, 0
+    (parse-date-time "2013-12-31T10:15:01Z")
+    => 3597473701, 0
+
 
 For further examples, please see Eval-Test in date-time-parser.lisp
 
@@ -126,7 +131,7 @@ _date-time-string_ must represent the date-time after 1900-01-01T00:00:00Z.
 
 Parsable Formats:
 
- * RFC822 Genus: RFC822, RFC1123, RFC2822, RFC5322, asctime.
+ * RFC822 Genus: RFC822, RFC1123, RFC2822, RFC5322, asctime, RFC850 (RFC1036).
  * ISO8601 Genus: ISO8601(:1988, :2000 and :2004. except for no-year format), W3CDTF, RFC3339.
  * Broken format: The above formats with little broken.
 

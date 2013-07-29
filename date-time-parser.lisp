@@ -1,4 +1,4 @@
-;;;; Last modified : 2013-07-26 23:19:55 tkych
+;;;; Last modified : 2013-07-29 19:23:26 tkych
 
 ;; cl-date-time-parser/date-time-parser.lisp
 
@@ -539,6 +539,11 @@ Reference:
                                  (parse-month (parse-integer token) leap-year?)
                                  (setf month-parsed? t)))
                            (progn
+                             ;; c.f. RFC 3339, 3. Two Digit Years, last item
+                             (when (<= #.(char-code #\:) (char-code (char token 0)))
+                               (setf (char token 0)
+                                     (digit-char (- (char-code (char token 0)) #.(char-code #\:)))))
+
                              (parse-year (+ 2000 (parse-integer token)))
                              (setf year-parsed? t))))
                     ;; "YYYY", "YYYYYY"
@@ -567,7 +572,12 @@ Reference:
              ;; "YYYY"
              (4 (parse-year (parse-integer date)))
              ;; "YYDDD"
-             (5 (parse-year (+ 2000 (parse-integer date :start 0 :end 2)))
+             (5 ;; c.f. RFC 3339, 3. Two Digit Years, last item
+                (when (<= #.(char-code #\:) (char-code (char date 0)))
+                  (setf (char date 0)
+                        (digit-char (- (char-code (char date 0)) #.(char-code #\:)))))
+
+                (parse-year (+ 2000 (parse-integer date :start 0 :end 2)))
                 (parse-days (subseq date 2)))
              ;; "YYMMDD"
              (6 (parse-year  (+ 2000 (parse-integer date :start 0 :end 2)))
@@ -710,7 +720,7 @@ Examples:
 
  For more examples, see Eval-Test in date-time-parser.lisp"
   (check-type date-time-string string)
-  (if (ppcre:scan "\\D{2}" date-time-string)
+  (if (ppcre:scan "[a-zA-Z]{2}" date-time-string)
       (parse-rfc822-genus date-time-string)
       (parse-iso8601-genus date-time-string)))
 
@@ -828,7 +838,7 @@ Examples:
             (:values (enc 0 0 0 1 12 2003 0) 0))
        (=>? (parse "-03-12-31")
             (:values (enc 0 0 0 31 12 2003 0) 0))
-
+       
        (=>? (parse "03-12-31")
             (:values (enc 0 0 0 31 12 2003 0) 0))
 
@@ -843,6 +853,12 @@ Examples:
             (:values (enc 0 0 0 1 12 2003 0) 0))
        (=>? (parse "03-335")
             (:values (enc 0 0 0 1 12 2003 0) 0))
+
+       ;; c.f. RFC 3339, 3. Two Digit Years, last item
+       (=>? (parse ":0-09-09")
+            (:values (enc 0 0 0 9 9 2000 0) 0))
+       (=>? (parse ";0-09-09")
+            (:values (enc 0 0 0 9 9 2010 0) 0))
 
        ;; bogus W3CDTF (invalid hour)
        (=>? (parse "2003-12-31T25:14:55Z")
