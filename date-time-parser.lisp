@@ -1,4 +1,4 @@
-;;;; Last modified : 2013-07-30 21:39:45 tkych
+;;;; Last modified : 2013-07-30 21:48:37 tkych
 
 ;; cl-date-time-parser/date-time-parser.lisp
 
@@ -448,13 +448,14 @@ Reference:
        (=>? (rfc822 "Thudesday, 23-Jul-13 19:42:23 GMT")
             (:values (enc 23 42 19 23 7 2013 0) 0))
 
-       ;; supplemented this year
-       (=>? (rfc822 "Thu, 01 Jan")
-            (:values (enc 0 0 0 1 1 2013 0) 0))
-       (=>? (rfc822 "01 Jan")
-            (:values (enc 0 0 0 1 1 2013 0) 0))
-       (=>? (rfc822 "1 Jan")
-            (:values (enc 0 0 0 1 1 2013 0) 0))
+       ;; supplemental this year
+       (let ((this-year (nth-value 5 (get-decoded-time))))
+         (=>? (rfc822 "Thu, 01 Jan")
+              (:values (enc 0 0 0 1 1 this-year 0) 0))
+         (=>? (rfc822 "01 Jan")
+              (:values (enc 0 0 0 1 1 this-year 0) 0))
+         (=>? (rfc822 "1 Jan")
+              (:values (enc 0 0 0 1 1 this-year 0) 0)))
 
        )
 
@@ -873,13 +874,14 @@ Examples:
        (=>? (parse ";0-09-09")
             (:values (enc 0 0 0 9 9 2010 0) 0))
        
-       ;; supplemented this year
-       (=>? (parse "Thu, 01 Jan")
-            (:values (enc 0 0 0 1 1 2013 0) 0))
-       (=>? (parse "01 Jan")
-            (:values (enc 0 0 0 1 1 2013 0) 0))
-       (=>? (parse "1 Jan")
-            (:values (enc 0 0 0 1 1 2013 0) 0))
+       ;; supplemental this year
+       (let ((this-year (nth-value 5 (get-decoded-time))))
+         (=>? (parse "Thu, 01 Jan")
+              (:values (enc 0 0 0 1 1 this-year 0) 0))
+         (=>? (parse "01 Jan")
+              (:values (enc 0 0 0 1 1 this-year 0) 0))
+         (=>? (parse "1 Jan")
+              (:values (enc 0 0 0 1 1 this-year 0) 0)))
 
        ;; bogus W3CDTF (invalid hour)
        (=>? (parse "2003-12-31T25:14:55Z")
