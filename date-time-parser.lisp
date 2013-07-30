@@ -1,4 +1,4 @@
-;;;; Last modified : 2013-07-29 19:23:26 tkych
+;;;; Last modified : 2013-07-30 21:39:45 tkych
 
 ;; cl-date-time-parser/date-time-parser.lisp
 
@@ -373,12 +373,16 @@ Reference:
                                   (minute (parse-integer
                                            time-zone :start (if (find #\: time-zone) 3 2))))
                               (incf universal-time (* sign (+ (* hour #.+hour-secs+)
-                                                              (* minute #.+minuite-secs+)))))))))))))))
-    
-    (when (equal 0 leap-year?)
-      (error "Year was not detected in ~S as RFC822-Genus." date-time-string))
-    (incf universal-time (month-to-ut month leap-year?))
-    
+                                                              (* minute #.+minuite-secs+))))))))))))))
+
+      (when (equal 0 leap-year?)
+        (let ((this-year (nth-value 5 (get-decoded-time))))
+          (warn "Year was not detected in ~S as RFC822-Genus. YEAR is supplemented with this year, ~S."
+                date-time-string this-year)
+          (parse-year this-year)))
+
+      (incf universal-time (month-to-ut month leap-year?)))
+
     (values universal-time fraction)))
 
 
@@ -443,6 +447,15 @@ Reference:
 
        (=>? (rfc822 "Thudesday, 23-Jul-13 19:42:23 GMT")
             (:values (enc 23 42 19 23 7 2013 0) 0))
+
+       ;; supplemented this year
+       (=>? (rfc822 "Thu, 01 Jan")
+            (:values (enc 0 0 0 1 1 2013 0) 0))
+       (=>? (rfc822 "01 Jan")
+            (:values (enc 0 0 0 1 1 2013 0) 0))
+       (=>? (rfc822 "1 Jan")
+            (:values (enc 0 0 0 1 1 2013 0) 0))
+
        )
 
 
@@ -859,6 +872,14 @@ Examples:
             (:values (enc 0 0 0 9 9 2000 0) 0))
        (=>? (parse ";0-09-09")
             (:values (enc 0 0 0 9 9 2010 0) 0))
+       
+       ;; supplemented this year
+       (=>? (parse "Thu, 01 Jan")
+            (:values (enc 0 0 0 1 1 2013 0) 0))
+       (=>? (parse "01 Jan")
+            (:values (enc 0 0 0 1 1 2013 0) 0))
+       (=>? (parse "1 Jan")
+            (:values (enc 0 0 0 1 1 2013 0) 0))
 
        ;; bogus W3CDTF (invalid hour)
        (=>? (parse "2003-12-31T25:14:55Z")
