@@ -1,4 +1,4 @@
-;;;; Last modified : 2013-07-31 20:26:05 tkych
+;;;; Last modified : 2013-07-31 20:39:31 tkych
 
 ;; cl-date-time-parser/date-time-parser.lisp
 
@@ -376,7 +376,9 @@ Reference:
                                                               (* minute #.+minuite-secs+))))))))))))))
 
       (when (equal 0 leap-year?)
-        (let ((this-year (nth-value 5 (get-decoded-time))))
+        ;; Memo: get-decoded-time returns date-time depending system time-zone.
+        (let ((this-year (nth-value 5 (decode-universal-time
+                                       (get-universal-time) 0))))
           (warn "YEAR was not detected in ~S as RFC822-Genus. YEAR was supplemented with this year, \"~S\"."
                 date-time-string this-year)
           (parse-year this-year)))
@@ -449,7 +451,8 @@ Reference:
             (:values (enc 23 42 19 23 7 2013 0) 0))
 
        ;; supplemental this year
-       (let ((this-year (nth-value 5 (get-decoded-time))))
+       (let ((this-year (nth-value 5 (decode-universal-time
+                                      (get-universal-time) 0))))
          (=>? (rfc822 "Thu, 01 Jan")
               (:values (enc 0 0 0 1 1 this-year 0) 0))
          (=>? (rfc822 "01 Jan")
@@ -879,7 +882,8 @@ Examples:
             (:values (enc 0 0 0 9 9 2010 0) 0))
        
        ;; supplemental this year
-       (let ((this-year (nth-value 5 (get-decoded-time))))
+       (let ((this-year (nth-value 5 (decode-universal-time
+                                      (get-universal-time) 0))))
          (=>? (parse "Thu, 01 Jan")
               (:values (enc 0 0 0 1 1 this-year 0) 0))
          (=>? (parse "01 Jan")
