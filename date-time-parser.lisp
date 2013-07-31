@@ -1,4 +1,4 @@
-;;;; Last modified : 2013-07-30 21:48:37 tkych
+;;;; Last modified : 2013-07-31 20:26:05 tkych
 
 ;; cl-date-time-parser/date-time-parser.lisp
 
@@ -377,7 +377,7 @@ Reference:
 
       (when (equal 0 leap-year?)
         (let ((this-year (nth-value 5 (get-decoded-time))))
-          (warn "Year was not detected in ~S as RFC822-Genus. YEAR is supplemented with this year, ~S."
+          (warn "YEAR was not detected in ~S as RFC822-Genus. YEAR was supplemented with this year, \"~S\"."
                 date-time-string this-year)
           (parse-year this-year)))
 
@@ -555,9 +555,11 @@ Reference:
                            (progn
                              ;; c.f. RFC 3339, 3. Two Digit Years, last item
                              (when (<= #.(char-code #\:) (char-code (char token 0)))
-                               (setf (char token 0)
-                                     (digit-char (- (char-code (char token 0)) #.(char-code #\:)))))
-
+                               (let ((broken-two-digit-year (copy-seq token)))
+                                 (setf (char token 0)
+                                       (digit-char (- (char-code (char token 0)) #.(char-code #\:))))
+                                 (warn "Broken two-digit year ~S was parsed as \"~S\". (c.f. RFC 3339, 3.)"
+                                       broken-two-digit-year (+ 2000 (parse-integer token)))))
                              (parse-year (+ 2000 (parse-integer token)))
                              (setf year-parsed? t))))
                     ;; "YYYY", "YYYYYY"
@@ -588,9 +590,11 @@ Reference:
              ;; "YYDDD"
              (5 ;; c.f. RFC 3339, 3. Two Digit Years, last item
                 (when (<= #.(char-code #\:) (char-code (char date 0)))
-                  (setf (char date 0)
-                        (digit-char (- (char-code (char date 0)) #.(char-code #\:)))))
-
+                  (let ((broken-two-digit-year (subseq date 0 2)))
+                    (setf (char date 0)
+                          (digit-char (- (char-code (char date 0)) #.(char-code #\:))))
+                    (warn "Broken two-digit year ~S was parsed as \"~S\". (c.f. RFC 3339, 3.)"
+                          broken-two-digit-year (+ 2000 (parse-integer date :start 0 :end 2)))))
                 (parse-year (+ 2000 (parse-integer date :start 0 :end 2)))
                 (parse-days (subseq date 2)))
              ;; "YYMMDD"
