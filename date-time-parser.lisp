@@ -1,4 +1,4 @@
-;;;; Last modified : 2013-07-31 20:39:31 tkych
+;;;; Last modified : 2013-08-11 10:41:11 tkych
 
 ;; cl-date-time-parser/date-time-parser.lisp
 
@@ -27,7 +27,7 @@
   (defparameter *features-tmp* *features*)
 
   ;; when release, the following line should be comment in.
-  (setf *features* (delete :et *features*))
+  (setf *features* (remove :et *features*))
 
   ;; when release, the following two lines should be comment out.
   ;; (ql:quickload '(:cl-ppcre :split-sequence :anaphora :local-time :parse-float))
@@ -197,8 +197,13 @@ If first element of WANT is `:values`, then check mutiple values."
 (defun get-offset (tz-abbrev)
   (aif (gethash tz-abbrev *tz-abbrev-to-offest* nil)
        it
-       (setf (gethash tz-abbrev *tz-abbrev-to-offest*)
-             (calc-offset tz-abbrev))))
+       (let ((offset (handler-case
+                         (calc-offset tz-abbrev)
+                       (error ()
+                         (error "~S is not parsed as time-zone."
+                                tz-abbrev)))))
+         (setf (gethash tz-abbrev *tz-abbrev-to-offest*)
+               offset))))
 
 ;; !!! UGLY: using un-official api for local-time. !!!
 (defun calc-offset (tz-abbrev)

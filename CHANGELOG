@@ -1,14 +1,20 @@
-Last modified : 2013-07-30 21:41:58 tkych
+Last modified : 2013-08-11 10:43:18 tkych
 
 ======================================================================
  Change Log for CL-Date-Time-Parser
 ======================================================================
 
+Version 0.1.02 (beta)
+2013-08-11
+Wrapped: CALC-OFFSET into error-handler, since it is used unofficial
+	 local-time api.
+Fix Bug: delete -> remove
+
 Version 0.1.01 (beta)
 2013-07-30
-Add: missing year is supplemented with this year (rfc822-genus)
-Add: broken two-digit years parsable (iso8601-genus)
-Add: rfc850 and rfc1036 into rfc822-genus.
+Modified: missing year is supplemented with this year (rfc822-genus),
+Modified: broken two-digit years to parsable (iso8601-genus),
+Added   : rfc850 and rfc1036 into rfc822-genus.
 
 Version 0.1.00 (beta)
 2013-07-23
