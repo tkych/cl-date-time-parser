@@ -1,6 +1,10 @@
-;;;; Last modified : 2013-08-11 10:41:11 tkych
+;;;; Last modified: 2013-10-05 21:49:12 tkych
 
 ;; cl-date-time-parser/date-time-parser.lisp
+
+;; Copyright (c) 2013 Takaya OCHIAI <tkych.repl@gmail.com>
+;; This software is released under the MIT License.
+;; For more details, see cl-date-time-parser/LICENSE
 
 
 ;;====================================================================
@@ -23,7 +27,7 @@
 ;; Eval-Test for CL-Date-Time-Parser
 ;;--------------------------------------------------------------------
 
-(eval-when (:compile-toplevel :load-toplevel)
+(eval-when (:compile-toplevel :load-toplevel :execute)
   (defparameter *features-tmp* *features*)
 
   ;; when release, the following line should be comment in.
@@ -35,7 +39,7 @@
   )
 
 #+et
-(eval-when (:compile-toplevel :load-toplevel)
+(eval-when (:compile-toplevel :load-toplevel :execute)
 
   (defmacro =>? (form want &optional test)
     "Check whether FORM is evaluated to WANT by TEST (default is `equal`).
@@ -921,7 +925,7 @@ Examples:
 
 
 ;; Cleanup for Eval-Test
-(eval-when (:compile-toplevel :load-toplevel)
+(eval-when (:compile-toplevel :load-toplevel :execute)
   (setf *features* *features-tmp*))
 
 

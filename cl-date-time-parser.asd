@@ -1,6 +1,10 @@
-;;;; Last modified : 2013-08-11 10:43:34 tkych
+;;;; Last modified: 2013-10-05 21:49:34 tkych
 
 ;; cl-date-time-parser/cl-date-time-parser.asd
+
+;; Copyright (c) 2013 Takaya OCHIAI <tkych.repl@gmail.com>
+;; This software is released under the MIT License.
+;; For more details, see cl-date-time-parser/LICENSE
 
 
 ;;====================================================================

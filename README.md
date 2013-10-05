@@ -1,4 +1,4 @@
-Last modified : 2013-08-11 10:43:27 tkych
+Last modified: 2013-10-05 21:47:29 tkych
 
 version 0.1.02 (beta)
 
@@ -34,6 +34,32 @@ Parsable date-time formats are:
  * RFC3339.
 
 In addition, `parse-date-time` can liberally parse the above formats with little broken.
+
+
+Depends-on
+----------
+
+ * [alexandria](http://common-lisp.net/project/alexandria/)
+ * [anaphora](http://common-lisp.net/project/anaphora/)
+ * [split-sequence](http://www.cliki.net/split-sequence)
+ * [cl-ppcre](http://weitz.de/cl-ppcre/)
+ * [local-time](http://common-lisp.net/project/local-time/)
+ * [parse-float](https://github.com/soemraws/parse-float)
+
+
+Installation
+------------
+
+##### Auto:
+
+ 0. CL-REPL> `(ql:quickload :cl-date-time-parser)`
+
+
+##### Manual:
+
+ 0. SHELL$   `git clone https://github.com/tkych/cl-date-time-parser`
+ 1. CL-REPL> `(push #p"/path-to-cl-date-time-parser/cl-date-time-parser/" asdf:*central-registry*)`
+ 2. CL-REPL> `(ql:quickload :cl-date-time-parser)` or `(asdf:load-system :cl-date-time-parser)`
 
 
 Examples
@@ -100,25 +126,6 @@ Examples
 
 
 For further examples, please see Eval-Test in date-time-parser.lisp
-
-
-Depends-on
-----------
-
- * [alexandria](http://common-lisp.net/project/alexandria/)
- * [anaphora](http://common-lisp.net/project/anaphora/)
- * [split-sequence](http://www.cliki.net/split-sequence)
- * [cl-ppcre](http://weitz.de/cl-ppcre/)
- * [local-time](http://common-lisp.net/project/local-time/)
- * [parse-float](https://github.com/soemraws/parse-float)
-
-
-Installation
-------------
-
- 0. SHELL$   `git clone https://github.com/tkych/cl-date-time-parser.git`
- 1. CL-REPL> `(push #p"/path-to-cl-date-time-parser/cl-date-time-parser/" asdf:*central-registry*)`
- 2. CL-REPL> `(ql:quickload :cl-date-time-parser)` or `(asdf:load-system :cl-date-time-parser)`
 
 
 Manual
