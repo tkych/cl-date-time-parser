@@ -1,4 +1,4 @@
-Last modified: 2013-10-05 21:47:29 tkych
+Last modified: 2013-10-21 19:53:34 tkych
 
 version 0.1.02 (beta)
 
@@ -49,6 +49,11 @@ Depends-on
 
 Installation
 ------------
+
+#### cl-test-grid results:
+
+ - http://common-lisp.net/project/cl-test-grid/library/cl-date-time-parser.html
+
 
 ##### Auto:
 
