@@ -327,7 +327,8 @@ Reference:
              (let ((num-days (parse-integer token)))
                (incf universal-time (* (1- num-days) +day-secs+)))))
 
-      (dolist (token (ppcre:split "[, -]|(?=\\d[A-Za-z]+$)" date-time-string))
+      (dolist (token (ppcre:split "(?=[+-]\\d{2}:?\\d{2})|[, -]|(?=\\d[A-Za-z]+$)"
+                                  date-time-string))
         (when (string/= "" token)
           ;; Memo:
           ;; * Check whether last char is digit-char or not,
@@ -370,7 +371,7 @@ Reference:
                 ;; "YYYY"
                 (4 (parse-year (parse-integer token)))
                 ;; hh:mm(:ss)?([+-]hh:?mm)? or [+-]hh:?mm
-                (t (let ((tokens (ppcre:split "-|\\+" token)))
+                (t (let ((tokens (ppcre:split "[+-]" token)))
                      (ecase (length tokens)
                        ;; "hh:mm:ss.ss", "hh:mm:ss", "hh:mm"
                        (1 (parse-time-part token))
@@ -442,6 +443,14 @@ Reference:
             (:values (enc 0 0 0 1 1 2013 -7) 0))
        (=>? (rfc822 "Sat, 01 Jan 2013 00:00:00+13:00")
             (:values (enc 0 0 0 1 1 2013 -13) 0))
+       (=>? (rfc822 "Sat, 01 Mar 2008 19:42:34 -0500")
+            (:values (enc 34 42 19 1 3 2008 5) 0))
+       (=>? (rfc822 "Sat, 01 Mar 2008 19:42:34-0500")
+            (:values (enc 34 42 19 1 3 2008 5) 0))
+       (=>? (rfc822 "Sat, 01 Mar 2008 19:42:34 -05:00")
+            (:values (enc 34 42 19 1 3 2008 5) 0))
+       (=>? (rfc822 "Sat, 01 Mar 2008 19:42:34-05:00")
+            (:values (enc 34 42 19 1 3 2008 5) 0))
 
        (=>? (rfc822 "Thu, 01 Jan 2004")
             (:values (enc 0 0 0 1 1 2004 0) 0))
