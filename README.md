@@ -1,6 +1,6 @@
-Last modified: 2013-10-21 19:53:34 tkych
+Last modified: 2014-05-18 14:39:27 tkych
 
-version 0.1.02 (beta)
+version 0.1.03 (beta)
 
 
 CL-Date-Time-Parser

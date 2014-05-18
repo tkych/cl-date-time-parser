@@ -1,8 +1,14 @@
-Last modified : 2013-08-11 10:43:18 tkych
+Last modified: 2014-05-18 14:39:04 tkych
 
 ======================================================================
  Change Log for CL-Date-Time-Parser
 ======================================================================
+
+Version 0.1.03 (beta)
+2013-05-18
+Fix Bug: parsing RFC822-Genus with negative timezone offset.
+	 This bug was found and fixed by Kan-Ru Chen (a.k.a. kanru).
+	 Thanks!
 
 Version 0.1.02 (beta)
 2013-08-11
