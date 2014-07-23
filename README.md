@@ -1,6 +1,4 @@
-Last modified: 2014-05-18 14:39:27 tkych
-
-version 0.1.03 (beta)
+version 0.1.13
 
 
 CL-Date-Time-Parser
@@ -175,4 +173,4 @@ Author, License, Copyright
 
  - MIT License
 
- - Copyright (C) 2013 Takaya OCHIAI
+ - Copyright (C) 2013-2014 Takaya OCHIAI

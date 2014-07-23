@@ -1,6 +1,6 @@
 ;;;; cl-date-time-parser/date-time-parser.lisp
 
-;; Copyright (c) 2013 Takaya OCHIAI <tkych.repl@gmail.com>
+;; Copyright (c) 2013-2014 Takaya OCHIAI <tkych.repl@gmail.com>
 ;; This software is released under the MIT License.
 ;; For more details, see cl-date-time-parser/LICENSE
 

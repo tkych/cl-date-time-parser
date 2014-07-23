@@ -13,7 +13,7 @@
 (asdf:defsystem #:cl-date-time-parser-test
   :name        "cl-date-time-parser-test"
   :description "Test for cl-date-time-parser."
-  :version     "0.1.03"
+  :version     "0.1.13"
   :licence     "MIT (see file LICENCE for details)"
   :author      "Takaya OCHIAI <tkych.repl@gmail.com>"
   :depends-on  (#:cl-date-time-parser #:fiveam #:local-time)

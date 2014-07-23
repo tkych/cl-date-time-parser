@@ -1,11 +1,9 @@
-Last modified: 2014-05-18 14:39:04 tkych
-
-======================================================================
- Change Log for CL-Date-Time-Parser
-======================================================================
+Version 0.1.13
+2014-07-23
+Added : test system for Travis CI.
 
 Version 0.1.03 (beta)
-2013-05-18
+2014-05-18
 Fix Bug: parsing RFC822-Genus with negative timezone offset.
 	 This bug was found and fixed by Kan-Ru Chen (a.k.a. kanru).
 	 Thanks!
@@ -25,6 +23,3 @@ Added   : rfc850 and rfc1036 into rfc822-genus.
 Version 0.1.00 (beta)
 2013-07-23
 Initial Release
-
-
-======================================================================
