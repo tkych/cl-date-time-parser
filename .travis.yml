@@ -1,0 +1,26 @@
+language: lisp
+
+env:
+  matrix:
+    - LISP=abcl
+    - LISP=sbcl
+    - LISP=sbcl32
+    - LISP=ccl
+    - LISP=ccl32
+    - LISP=clisp
+    - LISP=clisp32
+    - LISP=cmucl
+    - LISP=ecl
+
+install:
+ - curl --no-progress-bar --retry 10 https://raw2.github.com/luismbo/cl-travis/master/install.sh | bash
+
+script:
+ - cl-launch -i "(ql:quickload :cl-date-time-parser-test) (uiop:quit (if (cl-date-time-parser-test:run-tests) 0 1))"
+
+notifications:
+  email:
+    recipients:
+     - tkych.repl+travis-ci@gmail.com
+    on_success: never
+    on_failure: always
